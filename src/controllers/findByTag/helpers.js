@@ -1,6 +1,8 @@
 const { INLINE_BUTTONS } = require("../../../constants");
 const Diary = require("../../models/diary.model");
 
+
+console.log(1)
 async function getPagination(current, recLength) { //idk, recLength is better than maxpage?)
   let keys = [];
   let deleteKey = [];
