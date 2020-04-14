@@ -35,7 +35,7 @@ findByTag.on("callback_query", async function(ctx) {
     userId: ctx.chat.id,
     tag: recordTag
   });
-
+/* I'm thinkin' about moving the code below to a separate file, as it is the same for all types of search. I'll be glad to hear your opinion */
   let options = await JSON.parse(ctx.update.callback_query.data);
   let editOptions = Object.assign(
     {},

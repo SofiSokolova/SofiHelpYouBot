@@ -7,6 +7,7 @@ const { list } = require("./src/controllers/list");
 const { record } = require("./src/controllers/record");
 const { findByTag } = require("./src/controllers/findByTag");
 const { findByDate } = require("./src/controllers/findByDate");
+const { findAll } = require("./src/controllers/findAll");
 const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
 const mongoose = require("mongoose");
@@ -21,25 +22,25 @@ require("./src/models/diary.model");
 
 db.on("open", () => {
   const bot = new TelegramBot(token, { polling: true });
-  const stage = new Stage([list, record, findByTag]);
+  const stage = new Stage([list, record, findByTag, findByDate, findAll]);
 
   stage.register(list);
   stage.register(record);
   stage.register(findByTag);
   stage.register(findByDate);
+  stage.register(findAll);
 
   bot.use(session());
   bot.use(stage.middleware());
 
-  bot.command("start", ctx =>
+  bot.command("start", (ctx) =>
     ctx.reply(
       "How can I help you?",
       kb.menuKeyboard.open({ resize_keyboard: true })
     )
   );
 
-  bot.on("message", async ctx => {
-    console.log(ctx.message.text);
+  bot.on("message", async (ctx) => {
     switch (ctx.message.text) {
       case BUTTONS.CREATE_LIST:
         await ctx.scene.enter(SCENES.LIST);
@@ -56,9 +57,12 @@ db.on("open", () => {
       case BUTTONS.FIND_BY_TAG:
         await ctx.scene.enter(SCENES.FIND_BY_TAG);
         break;
-        case BUTTONS.FIND_BY_DATE:
-          await ctx.scene.enter(SCENES.FIND_BY_DATE);
-          break;
+      case BUTTONS.FIND_BY_DATE:
+        await ctx.scene.enter(SCENES.FIND_BY_DATE);
+        break;
+      case BUTTONS.FIND_All:
+        await ctx.scene.enter(SCENES.FIND_All);
+        break;
       case BUTTONS.BACK:
         await ctx.reply(
           "How can I help you?",

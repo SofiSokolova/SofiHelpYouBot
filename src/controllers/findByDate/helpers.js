@@ -2,6 +2,7 @@ const { INLINE_BUTTONS } = require("../../../constants");
 const Diary = require("../../models/diary.model");
 const moment = require('../../../node_modules/moment');
 
+// this function is the same for the all types of search, I think in the future I`ll move it separately
 async function getPagination(current, recLength) {
   let keys = [];
   let deleteKey = [];

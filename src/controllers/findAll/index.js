@@ -3,16 +3,18 @@ const WizardScene = require("telegraf/scenes/wizard");
 const Diary = require("../../models/diary.model");
 const { SCENES } = require("../../../constants");
 const { INLINE_BUTTONS } = require("../../../constants");
+const { BUTTONS } = require("../../../constants");
 const { findRecordByDate, getPagination } = require("./helpers");
 const { leave } = Stage;
-const moment = require("../../../node_modules/moment");
 const kb = require("../../../keyboards");
 
+let userDate;
+
 const findAll = new WizardScene(
-  SCENES.FIND_ALL,
+  SCENES.FIND_All,
   async (ctx) => {
-      await findRecordByDate(ctx);
-      return ctx.wizard.next();
+    await findRecordByDate(ctx);
+    return ctx.wizard.next();
   },
   async (ctx) => {
     return ctx.scene.leave();
@@ -22,23 +24,18 @@ const findAll = new WizardScene(
 findAll.leave((ctx) => {
   ctx.telegram.sendMessage(
     ctx.chat.id,
-    `You are welcome ❤`,
+    "You are welcome ❤",
     kb.menuKeyboard.open({ resize_keyboard: true })
   );
 });
 
 findAll.on("callback_query", async function (ctx) {
-  let startDate = moment(userDate).format("YYYY-MM-DD HH:mm");
-  let endDate = moment(userDate)
-    .add(23, "hours")
-    .add(59, "minutes")
-    .format("YYYY-MM-DD HH:mm");
-
   const record = await Diary.find({
     userId: ctx.chat.id,
-    created: { $gte: startDate, $lte: endDate },
-  }).select({ text: 1, created: 1, _id: 1 });
-
+  })
+    .sort({ $natural: -1 })
+    .select({ text: 1, created: 1, _id: 1 });
+  /* I'm thinkin' about moving the code below to a separate file, as it is the same for all types of search. I'll be glad to hear your opinion */
   let options = await JSON.parse(ctx.update.callback_query.data);
   let editOptions = Object.assign(
     {},
@@ -53,7 +50,7 @@ findAll.on("callback_query", async function (ctx) {
       .split("id: ")
       .slice(1, 2);
 
-    await Diary.findOneAndDelete({ _id: recordId })
+    await Diary.findOneAndDelete({ _id: recordId });
     record.pop();
 
     editOptions = Object.assign(
@@ -65,15 +62,15 @@ findAll.on("callback_query", async function (ctx) {
       }
     );
     await ctx.editMessageText(
-      `${record[parseInt(options.action)].text}` +
+      ` ${record[parseInt(options.action)].text} ` +
         `\n` +
         `${record[parseInt(options.action)].created
           .toString()
           .split("G")
           .slice(0, 1)}` +
         `\n` +
-        `id: ` +
-        `${record[parseInt(options.action)]._id}`,
+        `id:` +
+        ` ${record[parseInt(options.action)]._id}`,
       editOptions
     );
   } else if (
@@ -99,15 +96,15 @@ findAll.on("callback_query", async function (ctx) {
     return ctx.scene.leave();
   } else {
     await ctx.editMessageText(
-      `${record[parseInt(options.action)].text}` +
+      ` ${record[parseInt(options.action)].text} ` +
         `\n` +
         `${record[parseInt(options.action)].created
           .toString()
           .split("G")
           .slice(0, 1)}` +
         `\n` +
-        `id: ` +
-        `${record[parseInt(options.action)]._id}`,
+        `id:` +
+        ` ${record[parseInt(options.action)]._id}`,
       editOptions
     );
   }
@@ -116,5 +113,5 @@ findAll.on("callback_query", async function (ctx) {
 findAll.command("cancel", leave());
 
 module.exports = {
-    findAll,
+  findAll,
 };

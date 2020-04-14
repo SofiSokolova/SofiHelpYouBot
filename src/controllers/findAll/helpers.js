@@ -1,7 +1,7 @@
 const { INLINE_BUTTONS } = require("../../../constants");
 const Diary = require("../../models/diary.model");
-const moment = require('../../../node_modules/moment');
 
+// this function is the same for the all types of search, I think in the future I`ll move it separately
 async function getPagination(current, recLength) {
   let keys = [];
   let deleteKey = [];
@@ -11,8 +11,8 @@ async function getPagination(current, recLength) {
       text: `<<`,
       callback_data: JSON.stringify({
         type: "pre",
-        action: (current - 1).toString()
-      })
+        action: (current - 1).toString(),
+      }),
     });
   }
 
@@ -20,8 +20,8 @@ async function getPagination(current, recLength) {
     deleteKey.push({
       text: `Delete this record`,
       callback_data: JSON.stringify({
-        type: INLINE_BUTTONS.DELETE_LAST_REC
-      })
+        type: INLINE_BUTTONS.DELETE_LAST_REC,
+      }),
     });
   }
 
@@ -29,8 +29,8 @@ async function getPagination(current, recLength) {
     text: `${current + 1}`,
     callback_data: JSON.stringify({
       type: "now",
-      action: current.toString()
-    })
+      action: current.toString(),
+    }),
   });
 
   if (current !== 0 && current == recLength - 1) {
@@ -38,8 +38,8 @@ async function getPagination(current, recLength) {
       text: `Delete this record`,
       callback_data: JSON.stringify({
         type: INLINE_BUTTONS.DELETE_RECORD,
-        action: (current - 1).toString()
-      })
+        action: (current - 1).toString(),
+      }),
     });
   }
   if (current !== recLength - 1) {
@@ -47,48 +47,42 @@ async function getPagination(current, recLength) {
       text: `>>`,
       callback_data: JSON.stringify({
         type: "next",
-        action: (current + 1).toString()
-      })
+        action: (current + 1).toString(),
+      }),
     });
     deleteKey.push({
       text: `Delete this record`,
       callback_data: JSON.stringify({
         type: INLINE_BUTTONS.DELETE_RECORD,
-        action: (current + 1).toString()
-      })
+        action: (current + 1).toString(),
+      }),
     });
   }
 
   deleteKey.push({
     text: `Hide it`,
     callback_data: JSON.stringify({
-      type: "hide"
-    })
+      type: "hide",
+    }),
   });
 
   return {
     reply_markup: JSON.stringify({
-      inline_keyboard: [keys, deleteKey]
-    })
+      inline_keyboard: [keys, deleteKey],
+    }),
   };
 }
 
-
 async function findRecordByDate(ctx) {
-
-let startDate = moment(ctx.message.text).format('YYYY-MM-DD HH:mm')
-let endDate =  moment(ctx.message.text).add(23, 'hours').add(59, 'minutes').format('YYYY-MM-DD HH:mm')
-
-const record = await Diary.find({
-  userId: ctx.chat.id,
-  created: { $gte: startDate, $lte: endDate }
-})
-  .select({ text: 1, created: 1, _id: 1 });
-  console.log(record)
+  const record = await Diary.find({
+    userId: ctx.chat.id
+  })
+    .sort({ $natural: -1 })
+    .select({ text: 1, created: 1, _id: 1 });
   if (record.length !== 0) {
     displaySearchResult(ctx, record);
   } else {
-    ctx.reply("You have no records on this day");
+    ctx.reply("You have no records");
     ctx.scene.leave();
   }
 }
