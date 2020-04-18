@@ -22,8 +22,8 @@ const findByDate = new WizardScene(
       await findRecordByDate(ctx);
       return ctx.wizard.next();
     } else {
-      ctx.reply(`Invalid date`);
-      return ctx.scene.leave();
+      await ctx.reply(`Invalid date`);
+      await ctx.scene.leave();
     }
   },
   async (ctx) => {

@@ -11,7 +11,11 @@ const DiarySchema = new Schema({
     required: true,
   },
   tag: {
-    type: Array
+    type: Array,
+  },
+  created: {
+    type: Date,
+    default: Date.now,
   },
 });
 

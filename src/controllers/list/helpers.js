@@ -4,7 +4,7 @@ const { BUTTONS } = require("../../../constants");
 
 const User = require("../../models/user.model");
 
-const deleteListKeyboard = new ReplyKeyboard().addRow("Delete list");
+const deleteListKeyboard = new ReplyKeyboard().addRow(BUTTONS.DELETE_LIST);
 
 function getListInlineKeyboard() {
   return Markup.inlineKeyboard([

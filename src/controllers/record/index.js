@@ -13,7 +13,7 @@ const record = new WizardScene(
   SCENES.RECORD,
   async ctx => {
     ctx.reply(
-      `Write me what happened to you today. For example:\n "Today I'm SO happy #happy #theBestDayOfMyLife"\nIn the future, you can find this message by tag`
+      `✏ Write me what happened to you today. For example:\n "Today I'm SO happy #happy #theBestDayOfMyLife"\n‼ In the future, you can find this message by tag`
     );
     return ctx.wizard.next();
   },
@@ -35,7 +35,7 @@ const record = new WizardScene(
 record.leave(ctx => {
   ctx.telegram.sendMessage(
     ctx.chat.id,
-    `I will keep it in my memory for you`,
+    `I will keep it in my memory for you 🤫`,
     kb.menuKeyboard.open({ resize_keyboard: true })
   );
 });

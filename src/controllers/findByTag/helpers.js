@@ -79,13 +79,12 @@ async function findRecordByTag(ctx) {
     const record = await Diary.find({
       userId: ctx.chat.id,
       tag: ctx.message.text,
-    })
-      .select({ text: 1, created: 1, _id: 1 });
-
+    }).select({ text: 1, created: 1, _id: 1 });
+    console.log(record);
     if (record.length !== 0) {
       displaySearchResult(ctx, record);
     } else {
-      ctx.reply("You have no records with this tag");
+      ctx.reply("You have no records with this tag 😰");
       ctx.scene.leave();
     }
   } else if (!/#\S+/g.exec(ctx.message.text)) {
@@ -95,13 +94,14 @@ async function findRecordByTag(ctx) {
 }
 
 async function displaySearchResult(ctx, searchResult) {
-  ctx.reply(
-    `${searchResult[0].text}\n${searchResult[0].created
-      .toString()
-      .split("G")
-      .slice(0, 1)} \nid: ${searchResult[0]._id}`,
-    await getPagination(0, searchResult.length)
-  );
+  console.log(searchResult[0].created),
+    ctx.reply(
+      `${searchResult[0].text}\n${searchResult[0].created
+        .toString()
+        .split("G")
+        .slice(0, 1)} \nid: ${searchResult[0]._id}`,
+      await getPagination(0, searchResult.length)
+    );
 }
 
 module.exports = {

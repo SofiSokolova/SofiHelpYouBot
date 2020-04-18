@@ -3,12 +3,9 @@ const WizardScene = require("telegraf/scenes/wizard");
 const Diary = require("../../models/diary.model");
 const { SCENES } = require("../../../constants");
 const { INLINE_BUTTONS } = require("../../../constants");
-const { BUTTONS } = require("../../../constants");
 const { findRecordByDate, getPagination } = require("./helpers");
 const { leave } = Stage;
 const kb = require("../../../keyboards");
-
-let userDate;
 
 const findAll = new WizardScene(
   SCENES.FIND_All,

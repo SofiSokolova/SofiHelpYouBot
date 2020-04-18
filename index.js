@@ -8,11 +8,13 @@ const { record } = require("./src/controllers/record");
 const { findByTag } = require("./src/controllers/findByTag");
 const { findByDate } = require("./src/controllers/findByDate");
 const { findAll } = require("./src/controllers/findAll");
+const { weather } = require("./src/controllers/weather");
 const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
 const mongoose = require("mongoose");
 const kb = require("./keyboards");
 require("./mongoose.connect");
+/* const weather = require('./src/controllers/weather'); */
 
 const token = config.parsed.TOKEN;
 const db = mongoose.connection;
@@ -20,15 +22,17 @@ const db = mongoose.connection;
 require("./src/models/user.model");
 require("./src/models/diary.model");
 
+
 db.on("open", () => {
   const bot = new TelegramBot(token, { polling: true });
-  const stage = new Stage([list, record, findByTag, findByDate, findAll]);
+  const stage = new Stage([list, record, findByTag, findByDate, findAll, weather]);
 
   stage.register(list);
   stage.register(record);
   stage.register(findByTag);
   stage.register(findByDate);
   stage.register(findAll);
+  stage.register(weather);
 
   bot.use(session());
   bot.use(stage.middleware());
@@ -50,10 +54,14 @@ db.on("open", () => {
         break;
       case BUTTONS.FIND:
         await ctx.reply(
-          "Select search type",
+          "Select search type ⬇",
           kb.findKeyboard.open({ resize_keyboard: true })
         );
         break;
+        case BUTTONS.WEATHER: {
+         await ctx.scene.enter(SCENES.WEATHER);
+        }
+          break;
       case BUTTONS.FIND_BY_TAG:
         await ctx.scene.enter(SCENES.FIND_BY_TAG);
         break;

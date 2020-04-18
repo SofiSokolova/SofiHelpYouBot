@@ -13,7 +13,7 @@ const list = new WizardScene(
   SCENES.LIST,
   ctx => {
     ctx.reply(
-      "Hi, glad to see you.\nSend me a to-do list in the format: \nHomework\nCinema\nWrite an essay\netc."
+      "❗ Send me a to-do list in the format: \nCinema\nWrite an essay\netc."
     );
     return ctx.wizard.next();
   },
