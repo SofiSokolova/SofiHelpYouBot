@@ -18,7 +18,7 @@ async function recordToDiary(ctx) {
   const toDiary = new Diary({
     userId: ctx.chat.id,
     text: ctx.message.text,
-    tag: ctx.message.text.match(/#\S+/g)
+    tag: ctx.message.text.match(/#\S+/g),
   });
   await toDiary.save();
 }
@@ -26,5 +26,5 @@ async function recordToDiary(ctx) {
 module.exports = {
   recordToDiary,
   deleteMessageKeyboard,
-  deleteUserMessage
+  deleteUserMessage,
 };

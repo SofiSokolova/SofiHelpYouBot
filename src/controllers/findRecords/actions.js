@@ -1,48 +1,15 @@
-const Stage = require("telegraf").Stage;
-const WizardScene = require("telegraf/scenes/wizard");
-const Diary = require("../../models/diary.model");
-const { SCENES } = require("../../../constants");
+const { getPagination } = require("./helpers");
 const { INLINE_BUTTONS } = require("../../../constants");
-const { findRecordByTag, getPagination } = require("./helpers");
-const { leave } = Stage;
-const kb = require("../../../keyboards");
-const findByTag = new WizardScene(
-  SCENES.FIND_BY_TAG,
-  async ctx => {
-    await ctx.reply(`Send me a tag in the format #tag`);
-    return ctx.wizard.next();
-  },
-  async ctx => {
-    await findRecordByTag(ctx);
-    return ctx.wizard.next();
-  },
-  async ctx => {
-    return ctx.scene.leave();
-  }
-);
+const Diary = require("./../../models/diary.model");
 
-findByTag.leave(ctx => {
-  ctx.telegram.sendMessage(
-    ctx.chat.id,
-    `You are welcome ❤`,
-    kb.menuKeyboard.open({ resize_keyboard: true })
-  );
-});
-
-findByTag.on("callback_query", async function(ctx) {
-  let recordTag = /#\S+/g.exec(ctx.update.callback_query.message.text);
-  const record = await Diary.find({
-    userId: ctx.chat.id,
-    tag: recordTag
-  });
-/* I'm thinkin' about moving the code below to a separate file, as it is the same for all types of search. I'll be glad to hear your opinion */
+async function recAction(ctx, record) {
   let options = await JSON.parse(ctx.update.callback_query.data);
   let editOptions = Object.assign(
     {},
     await getPagination(parseInt(options.action), record.length),
     {
       chat_id: ctx.chat.id,
-      message_id: ctx.update.callback_query.message.message_id
+      message_id: ctx.update.callback_query.message.message_id,
     }
   );
   if (ctx.update.callback_query.data.match(INLINE_BUTTONS.DELETE_RECORD)) {
@@ -58,7 +25,7 @@ findByTag.on("callback_query", async function(ctx) {
       await getPagination(parseInt(options.action), record.length),
       {
         chat_id: ctx.chat.id,
-        message_id: ctx.update.callback_query.message.message_id
+        message_id: ctx.update.callback_query.message.message_id,
       }
     );
     await ctx.editMessageText(
@@ -108,10 +75,8 @@ findByTag.on("callback_query", async function(ctx) {
       editOptions
     );
   }
-});
-
-findByTag.command("cancel", leave());
+}
 
 module.exports = {
-  findByTag
+  recAction,
 };

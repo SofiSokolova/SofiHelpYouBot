@@ -5,12 +5,12 @@ const UserSchema = new Schema({
   telegramId: {
     type: Number,
     required: true,
-    index: { unique: true }
+    index: { unique: true },
   },
   list: {
     type: Array,
-    default: []
-  }
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("users", UserSchema);

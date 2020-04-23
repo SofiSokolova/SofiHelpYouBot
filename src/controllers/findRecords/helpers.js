@@ -1,7 +1,6 @@
 const { INLINE_BUTTONS } = require("../../../constants");
-const Diary = require("../../models/diary.model");
+const { BUTTONS } = require("../../../constants");
 
-// this function is the same for the all types of search, I think in the future I`ll move it separately
 async function getPagination(current, recLength) {
   let keys = [];
   let deleteKey = [];
@@ -18,7 +17,7 @@ async function getPagination(current, recLength) {
 
   if (current == 0 && recLength - 1 == 0) {
     deleteKey.push({
-      text: `Delete this record`,
+      text: BUTTONS.DELETE_THIS_REC,
       callback_data: JSON.stringify({
         type: INLINE_BUTTONS.DELETE_LAST_REC,
       }),
@@ -35,7 +34,7 @@ async function getPagination(current, recLength) {
 
   if (current !== 0 && current == recLength - 1) {
     deleteKey.push({
-      text: `Delete this record`,
+      text: BUTTONS.DELETE_THIS_REC,
       callback_data: JSON.stringify({
         type: INLINE_BUTTONS.DELETE_RECORD,
         action: (current - 1).toString(),
@@ -51,7 +50,7 @@ async function getPagination(current, recLength) {
       }),
     });
     deleteKey.push({
-      text: `Delete this record`,
+      text: BUTTONS.DELETE_THIS_REC,
       callback_data: JSON.stringify({
         type: INLINE_BUTTONS.DELETE_RECORD,
         action: (current + 1).toString(),
@@ -73,20 +72,6 @@ async function getPagination(current, recLength) {
   };
 }
 
-async function findRecordByDate(ctx) {
-  const record = await Diary.find({
-    userId: ctx.chat.id
-  })
-    .sort({ $natural: -1 })
-    .select({ text: 1, created: 1, _id: 1 });
-  if (record.length !== 0) {
-    displaySearchResult(ctx, record);
-  } else {
-    ctx.reply("You have no records");
-    ctx.scene.leave();
-  }
-}
-
 async function displaySearchResult(ctx, searchResult) {
   ctx.reply(
     `${searchResult[0].text}\n${searchResult[0].created
@@ -98,7 +83,6 @@ async function displaySearchResult(ctx, searchResult) {
 }
 
 module.exports = {
-  findRecordByDate,
+  getPagination,
   displaySearchResult,
-  getPagination
 };

@@ -9,14 +9,14 @@ const deleteListKeyboard = new ReplyKeyboard().addRow(BUTTONS.DELETE_LIST);
 function getListInlineKeyboard() {
   return Markup.inlineKeyboard([
     Markup.callbackButton("✅", "edit"),
-    Markup.callbackButton("❌", "delete")
+    Markup.callbackButton("❌", "delete"),
   ]);
 }
 
 function strikeThrough(text) {
   return text
     .split("")
-    .map(char => char + "\u0336")
+    .map((char) => char + "\u0336")
     .join("");
 }
 
@@ -26,7 +26,7 @@ async function addUserList(chatId, msgId) {
     { $addToSet: { list: msgId } },
     {
       new: true,
-      upsert: true
+      upsert: true,
     }
   );
   await user.save();
@@ -36,7 +36,7 @@ async function cleanListMessages(ctx) {
   const user = await User.findOne({ telegramId: ctx.chat.id });
   if (ctx.message.text === BUTTONS.DELETE_LIST) {
     await Promise.all(
-      user.list.map(async item => {
+      user.list.map(async (item) => {
         await ctx.telegram.deleteMessage(ctx.chat.id, item);
       })
     );
@@ -58,7 +58,7 @@ async function getListMessages(ctx) {
   let splitMessage = ctx.message.text.split("\n");
   if (ctx.message.text !== BUTTONS.DELETE_LIST) {
     await Promise.all(
-      splitMessage.map(async msg => {
+      splitMessage.map(async (msg) => {
         let botMsg = await ctx.telegram.sendMessage(
           ctx.chat.id,
           msg,
@@ -81,5 +81,5 @@ module.exports = {
   strikeThrough,
   getListInlineKeyboard,
   deleteListKeyboard,
-  deleteListItem
+  deleteListItem,
 };
