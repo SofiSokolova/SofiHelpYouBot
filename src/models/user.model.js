@@ -7,10 +7,12 @@ const UserSchema = new Schema({
     required: true,
     index: { unique: true },
   },
-  list: {
-    type: Array,
-    default: [],
-  },
+  list: [
+    {
+      type: String,
+      default: [],
+    },
+  ],
 });
 
 module.exports = mongoose.model("users", UserSchema);

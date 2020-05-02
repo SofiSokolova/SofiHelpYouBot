@@ -24,6 +24,7 @@ module.exports = {
   },
   INLINE_BUTTONS: {
     DELETE_RECORD: "dR",
+    DELETE_FIRST_RECORD: "dFR",
     DELETE_LAST_REC: "dLR",
     HIDE_REC: "hide",
   },
