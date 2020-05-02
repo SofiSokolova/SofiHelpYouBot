@@ -2,10 +2,14 @@ const Stage = require("telegraf").Stage;
 const WizardScene = require("telegraf/scenes/wizard");
 const Diary = require("../../../models/diary.model");
 const { SCENES } = require("../../../../constants");
-const { findRecordByTag } = require("./helpers");
+const { findRecordByTag, countRecords } = require("./helpers");
+const { displaySearchResult } = require("../helpers");
 const { recAction } = require("../actions");
 const { leave } = Stage;
 const kb = require("../../../../keyboards");
+
+let userTag;
+
 const findByTag = new WizardScene(
   SCENES.FIND_BY_TAG,
   async (ctx) => {
@@ -13,8 +17,21 @@ const findByTag = new WizardScene(
     return ctx.wizard.next();
   },
   async (ctx) => {
-    await findRecordByTag(ctx);
-    return ctx.wizard.next();
+    if (/#\S+/g.exec(ctx.message.text)) {
+      userTag = ctx.message.text;
+      let record = await findRecordByTag(ctx.chat.id, userTag, 0);
+      let recLength = await countRecords(ctx.chat.id, userTag);
+      if (recLength !== 0) {
+        displaySearchResult(ctx, record, recLength);
+        return ctx.wizard.next();
+      } else {
+        ctx.reply("You have no records with this tag 😰");
+        ctx.scene.leave();
+      }
+    } else {
+      ctx.reply("Invalid tag");
+      ctx.scene.leave();
+    }
   },
   async (ctx) => {
     return ctx.scene.leave();
@@ -30,12 +47,15 @@ findByTag.leave((ctx) => {
 });
 
 findByTag.on("callback_query", async function (ctx) {
-  let recordTag = /#\S+/g.exec(ctx.update.callback_query.message.text);
-  const record = await Diary.find({
-    userId: ctx.chat.id,
-    tag: recordTag,
-  });
-  await recAction(ctx, record);
+  try {
+    let skipRec = JSON.parse(ctx.update.callback_query.data);
+    let record = await findRecordByTag(ctx.chat.id, userTag, parseInt(skipRec.action));
+    let recLength = await countRecords(ctx.chat.id, userTag);
+    await recAction(ctx, record, recLength);
+  } catch (err) {
+    console.log(err);
+    await ctx.scene.leave();
+  }
 });
 
 findByTag.command("cancel", leave());

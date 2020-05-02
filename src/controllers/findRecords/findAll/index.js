@@ -1,7 +1,7 @@
 const Stage = require("telegraf").Stage;
 const WizardScene = require("telegraf/scenes/wizard");
 const { SCENES } = require("../../../../constants");
-const { findAllRec, countRecords } = require("./helpers");
+const { findRecById, countRecords } = require("./helpers");
 const { displaySearchResult } = require("../helpers");
 const { recAction } = require("../actions");
 const { leave } = Stage;
@@ -10,7 +10,7 @@ const kb = require("../../../../keyboards");
 const findAll = new WizardScene(
   SCENES.FIND_All,
   async (ctx) => {
-    let record = await findAllRec(ctx.chat.id, 0);
+    let record = await findRecById(ctx.chat.id, 0);
     let recLength = await countRecords(ctx);
     if (recLength !== 0) {
       await displaySearchResult(ctx, record, recLength);
@@ -36,7 +36,7 @@ findAll.leave(async (ctx) => {
 findAll.on("callback_query", async function (ctx) {
   try {
     let skipRec = JSON.parse(ctx.update.callback_query.data);
-    let record = await findAllRec(ctx.chat.id, parseInt(skipRec.action));
+    let record = await findRecById(ctx.chat.id, parseInt(skipRec.action));
     let recLength = await countRecords(ctx);
     await recAction(ctx, record, recLength);
   } catch (err) {

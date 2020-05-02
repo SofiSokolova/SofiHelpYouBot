@@ -1,6 +1,6 @@
 const Diary = require("../../../models/diary.model");
 
-async function findAllRec(userId, skipRec) {
+async function findRecById(userId, skipRec) {
   let record = await Diary.find({
     userId: userId,
   })
@@ -17,6 +17,6 @@ async function countRecords(ctx) {
 }
 
 module.exports = {
-  findAllRec,
+  findRecById,
   countRecords,
 };

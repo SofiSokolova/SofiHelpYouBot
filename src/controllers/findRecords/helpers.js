@@ -4,7 +4,6 @@ const { BUTTONS } = require("../../../constants");
 async function getPagination(current, recLength) {
   let keys = [];
   let deleteKey = [];
-  console.log(`tak blet ya neponyav ${current}`);
 
   if (current > 0) {
     keys.push({
@@ -16,6 +15,15 @@ async function getPagination(current, recLength) {
     });
   }
 
+  keys.push({
+    text: `${current + 1}`,
+    callback_data: JSON.stringify({
+      type: "now",
+      action: current.toString(),
+    }),
+  });
+
+  //if you remove the last record at all
   if (current == 0 && recLength - 1 == 0) {
     deleteKey.push({
       text: BUTTONS.DELETE_THIS_REC,
@@ -24,14 +32,6 @@ async function getPagination(current, recLength) {
       }),
     });
   }
-
-  keys.push({
-    text: `${current + 1}`,
-    callback_data: JSON.stringify({
-      type: "now",
-      action: current.toString(),
-    }),
-  });
 
   //if you remove the first record
   if (current == 0 && recLength - 1 !== 0) {
@@ -60,6 +60,7 @@ async function getPagination(current, recLength) {
       }),
     });
   }
+  
   if (current !== 0 && current !== recLength - 1) {
     keys.push({
       text: `>>`,
