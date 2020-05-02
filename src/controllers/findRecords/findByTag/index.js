@@ -1,6 +1,5 @@
 const Stage = require("telegraf").Stage;
 const WizardScene = require("telegraf/scenes/wizard");
-const Diary = require("../../../models/diary.model");
 const { SCENES } = require("../../../../constants");
 const { findRecordByTag, countRecords } = require("./helpers");
 const { displaySearchResult } = require("../helpers");
