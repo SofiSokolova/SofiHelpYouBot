@@ -1,6 +1,5 @@
 const Stage = require("telegraf").Stage;
 const WizardScene = require("telegraf/scenes/wizard");
-const Diary = require("../../../models/diary.model");
 const { SCENES } = require("../../../../constants");
 const { findRecordByTag, countRecords } = require("./helpers");
 const { displaySearchResult } = require("../helpers");
@@ -49,7 +48,11 @@ findByTag.leave((ctx) => {
 findByTag.on("callback_query", async function (ctx) {
   try {
     let skipRec = JSON.parse(ctx.update.callback_query.data);
-    let record = await findRecordByTag(ctx.chat.id, userTag, parseInt(skipRec.action));
+    let record = await findRecordByTag(
+      ctx.chat.id,
+      userTag,
+      parseInt(skipRec.action)
+    );
     let recLength = await countRecords(ctx.chat.id, userTag);
     await recAction(ctx, record, recLength);
   } catch (err) {

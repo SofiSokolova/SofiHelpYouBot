@@ -3,7 +3,7 @@ const { SCENES } = require("../../../constants");
 const WizardScene = require("telegraf/scenes/wizard");
 const kb = require("../../../keyboards");
 const { BUTTONS } = require("../../../constants");
-const { sendLocationKeyboard, getWeather } = require("./helpers");
+const { sendLocationKeyboard, displayWeather } = require("./helpers");
 
 const { leave } = Stage;
 
@@ -22,7 +22,7 @@ const weather = new WizardScene(
 );
 
 weather.on("location", async (ctx) => {
-  await getWeather(ctx);
+  await displayWeather(ctx);
   ctx.scene.leave();
 });
 

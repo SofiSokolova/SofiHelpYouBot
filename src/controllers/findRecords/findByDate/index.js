@@ -26,8 +26,17 @@ const findByDate = new WizardScene(
         .add(23, "hours")
         .add(59, "minutes")
         .format("YYYY-MM-DD HH:mm");
-      let record = await findRecordByDate(ctx.chat.id, startUserDate, endUserDate,  0);
-      let recLength = await countRecords(ctx.chat.id, startUserDate, endUserDate );
+      let record = await findRecordByDate(
+        ctx.chat.id,
+        startUserDate,
+        endUserDate,
+        0
+      );
+      let recLength = await countRecords(
+        ctx.chat.id,
+        startUserDate,
+        endUserDate
+      );
       if (recLength !== 0) {
         await displaySearchResult(ctx, record, recLength);
         await ctx.wizard.next();
@@ -56,8 +65,13 @@ findByDate.leave(async (ctx) => {
 findByDate.on("callback_query", async function (ctx) {
   try {
     let skipRec = JSON.parse(ctx.update.callback_query.data);
-    let record = await findRecordByDate(ctx.chat.id, startUserDate, endUserDate, parseInt(skipRec.action));
-    let recLength = await countRecords(ctx.chat.id, startUserDate, endUserDate );
+    let record = await findRecordByDate(
+      ctx.chat.id,
+      startUserDate,
+      endUserDate,
+      parseInt(skipRec.action)
+    );
+    let recLength = await countRecords(ctx.chat.id, startUserDate, endUserDate);
     await recAction(ctx, record, recLength);
   } catch (err) {
     console.log(err);

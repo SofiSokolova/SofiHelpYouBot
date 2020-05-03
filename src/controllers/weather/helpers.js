@@ -19,15 +19,16 @@ async function getWeather(ctx) {
   let response = await axios.get(
     `${url}lat=${ctx.update.message.location.latitude}&lon=${ctx.update.message.location.longitude}&appid=${keys}&lang=ru&units=metric`
   );
-  displayWeather(ctx, response);
+  return response;
 }
 
-async function displayWeather(ctx, response) {
+async function displayWeather(ctx) {
+  let response = await getWeather(ctx);
   let data = `${response.data.weather[0].description}:\n🌡 Температура: ${response.data.main.temp} C° \n⚠ (чувст. как ${response.data.main.feels_like} C°)\n🌪 Ветер: ${response.data.wind.speed}км/час\n💧 Влажность: ${response.data.main.humidity}%\n☁ Облачность: ${response.data.clouds.all}`;
   await ctx.telegram.sendMessage(ctx.chat.id, data);
 }
 
 module.exports = {
   sendLocationKeyboard,
-  getWeather,
+  displayWeather,
 };
