@@ -12,8 +12,18 @@ const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
 const kb = require("../keyboards");
 
+const options = {
+  webHook: {
+    port: process.env.PORT,
+  },
+};
 const token = process.env.TOKEN;
-const bot = new TelegramBot(token, { polling: true });
+
+const bot =
+  process.env.NODE_ENV === "DEV"
+    ? new TelegramBot(token, { polling: true })
+    : new TelegramBot(token, options);
+
 const stage = new Stage([
   list,
   record,
