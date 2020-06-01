@@ -7,10 +7,9 @@ const { recAction } = require("../actions");
 const { leave } = Stage;
 const moment = require("moment");
 const kb = require("../../../../keyboards");
+const User = require("../../../models/user.model");
 
-let userDate;
-let startUserDate;
-let endUserDate;
+
 
 const findByDate = new WizardScene(
   SCENES.FIND_BY_DATE,
@@ -20,12 +19,27 @@ const findByDate = new WizardScene(
   },
   async (ctx) => {
     if (moment(ctx.message.text).isValid()) {
-      userDate = ctx.message.text;
-      startUserDate = moment(userDate).format("YYYY-MM-DD HH:mm");
-      endUserDate = moment(userDate)
+     const startUserDate = moment(ctx.message.text).format("YYYY-MM-DD HH:mm");
+     const endUserDate = moment(ctx.message.text)
         .add(23, "hours")
         .add(59, "minutes")
         .format("YYYY-MM-DD HH:mm");
+      const user = await User.findOneAndUpdate(
+        { telegramId: ctx.chat.id },
+        {
+          $addToSet: {
+            userDate: ctx.message.text,
+            startDate: startUserDate,
+            endDate: endUserDate,
+          },
+        },
+        {
+          new: true,
+          upsert: true,
+        }
+      );
+      await user.save();
+
       let record = await findRecordByDate(
         ctx.chat.id,
         startUserDate,
@@ -55,6 +69,13 @@ const findByDate = new WizardScene(
 );
 
 findByDate.leave(async (ctx) => {
+  const user = await User.findOne(
+    { telegramId: ctx.chat.id },
+  );
+  user.userDate = [];
+  user.startDate = [];
+  user.endDate = [];
+  await user.save();
   await ctx.telegram.sendMessage(
     ctx.chat.id,
     "You are welcome ❤",
@@ -65,13 +86,15 @@ findByDate.leave(async (ctx) => {
 findByDate.on("callback_query", async function (ctx) {
   try {
     let skipRec = JSON.parse(ctx.update.callback_query.data);
+    const user = await User.findOne(
+      { telegramId: ctx.chat.id });
     let record = await findRecordByDate(
       ctx.chat.id,
-      startUserDate,
-      endUserDate,
+      user.startDate,
+      user.endDate,
       parseInt(skipRec.action)
     );
-    let recLength = await countRecords(ctx.chat.id, startUserDate, endUserDate);
+    let recLength = await countRecords(ctx.chat.id, user.startDate, user.endDate);
     await recAction(ctx, record, recLength);
   } catch (err) {
     console.log(err);

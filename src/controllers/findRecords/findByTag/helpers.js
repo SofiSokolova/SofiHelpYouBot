@@ -1,5 +1,6 @@
 const Diary = require("../../../models/diary.model");
 
+
 async function findRecordByTag(userId, userTag, skipRec) {
   const record = await Diary.find({
     userId: userId,

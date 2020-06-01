@@ -6,8 +6,7 @@ const { displaySearchResult } = require("../helpers");
 const { recAction } = require("../actions");
 const { leave } = Stage;
 const kb = require("../../../../keyboards");
-
-let userTag;
+const User = require("../../../models/user.model");
 
 const findByTag = new WizardScene(
   SCENES.FIND_BY_TAG,
@@ -16,10 +15,19 @@ const findByTag = new WizardScene(
     return ctx.wizard.next();
   },
   async (ctx) => {
+    try{
     if (/#\S+/g.exec(ctx.message.text)) {
-      userTag = ctx.message.text;
-      let record = await findRecordByTag(ctx.chat.id, userTag, 0);
-      let recLength = await countRecords(ctx.chat.id, userTag);
+      const user = await User.findOneAndUpdate(
+        { telegramId: ctx.chat.id },
+        { $addToSet: { userTag: ctx.message.text } },
+        {
+          new: true,
+          upsert: true,
+        }
+      );
+      await user.save();
+      let record = await findRecordByTag(ctx.chat.id, ctx.message.text, 0);
+      let recLength = await countRecords(ctx.chat.id, ctx.message.text);
       if (recLength !== 0) {
         displaySearchResult(ctx, record, recLength);
         return ctx.wizard.next();
@@ -31,13 +39,20 @@ const findByTag = new WizardScene(
       ctx.reply("Invalid tag");
       ctx.scene.leave();
     }
+  } catch (err) {
+    console.log(err);
+    await ctx.scene.leave();
+  }
   },
   async (ctx) => {
     return ctx.scene.leave();
   }
 );
 
-findByTag.leave((ctx) => {
+findByTag.leave(async (ctx) => {
+  const user = await User.findOne({ telegramId: ctx.chat.id });
+  user.userTag = [];
+  await user.save();
   ctx.telegram.sendMessage(
     ctx.chat.id,
     `You are welcome ❤`,
@@ -48,12 +63,14 @@ findByTag.leave((ctx) => {
 findByTag.on("callback_query", async function (ctx) {
   try {
     let skipRec = JSON.parse(ctx.update.callback_query.data);
+    const user = await User.findOne({ telegramId: ctx.chat.id });
     let record = await findRecordByTag(
       ctx.chat.id,
-      userTag,
+      user.userTag,
       parseInt(skipRec.action)
     );
-    let recLength = await countRecords(ctx.chat.id, userTag);
+
+    let recLength = await countRecords(ctx.chat.id, user.userTag);
     await recAction(ctx, record, recLength);
   } catch (err) {
     console.log(err);

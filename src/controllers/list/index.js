@@ -10,7 +10,8 @@ const list = new WizardScene(
   SCENES.LIST,
   (ctx) => {
     ctx.reply(
-      "❗ Send me a to-do list in the format: \nCinema\nWrite an essay\netc."
+      "❗ Send me a to-do list in the format: \nCinema\nWrite an essay\netc.",
+      kb.menuKeyboard.close()
     );
     return ctx.wizard.next();
   },
