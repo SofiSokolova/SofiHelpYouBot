@@ -12,7 +12,7 @@ const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
 const kb = require("../keyboards");
 
-const token = config.parsed.TOKEN;
+const token = process.env.TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 const stage = new Stage([
   list,

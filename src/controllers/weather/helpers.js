@@ -2,8 +2,8 @@ const { ReplyKeyboard } = require("telegram-keyboard-wrapper");
 const { BUTTONS } = require("../../../constants");
 const axios = require("axios");
 const config = require("dotenv").config();
-const keys = config.parsed.API_KEYS;
-const url = config.parsed.OPENWEATHER_API_URL;
+const keys = process.env.API_KEYS;
+const url = process.env.OPENWEATHER_API_URL;
 
 const sendLocationKeyboard = new ReplyKeyboard()
   .addRow({
