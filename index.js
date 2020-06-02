@@ -5,4 +5,11 @@ async function startBot() {
   await initializeDB();
   await bot.use();
 }
+require("https")
+  .createServer()
+  .listen(process.env.PORT || 5000)
+  .on("request", function (req, res) {
+    res.end("");
+  });
+
 startBot().catch((err) => console.log(err));

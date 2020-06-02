@@ -97,6 +97,8 @@ bot.on("message", async (ctx) => {
   }
 });
 
+
+
 /* async function startDevMode(bot) {
   rp(`https://api.telegram.org/bot${process.env.TOKEN}/deleteWebhook`)
   await  bot.startPolling()
