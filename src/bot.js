@@ -96,7 +96,7 @@ bot.on("message", async (ctx) => {
   }
 });
 
-await bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
+bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
 
 bot.startWebhook(`/${process.env.TOKEN}`, null, 5000);
 
