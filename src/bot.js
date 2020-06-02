@@ -113,13 +113,10 @@ bot.on("message", async (ctx) => {
     cert: fs.readFileSync(process.env.PATH_TO_CERT)
   }; */
 
-bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
+/* bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
 
-bot.startWebhook(`/${process.env.TOKEN}`, null, 5000);
+bot.startWebhook(`/${process.env.TOKEN}`, null, 5000); */
 
-/* const webhookStatus = Telegram.getWebhookInfo();
-console.log("Webhook status", webhookStatus);
- */
 bot.launch();
 
 module.exports = bot;
