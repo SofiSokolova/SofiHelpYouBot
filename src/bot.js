@@ -22,17 +22,22 @@ const url =
 const token = process.env.TOKEN;
 const PORT = process.env.PORT || 3000;
 
-const bot =
+/* const bot =
   (process.env.NODE_ENV === "DEV")
     ? new TelegramBot(token, { polling: true })
-    : new TelegramBot(token, options);
+    : new TelegramBot(token, options); */
 
-console.log(`Bot ${bot[0]}`);
-console.log(`Option ${options[0]}`);
+if (process.env.NODE_ENV === "DEV"){
+  const bot = new TelegramBot(token, { polling: true })
+} else const bot = new TelegramBot(token, options)
 
-/* bot.listen(PORT, () => {
+
+/* console.log(`Bot ${bot[0]}`);
+console.log(`Option ${options[0]}`); */
+
+bot.listen(PORT, () => {
   console.log(`Our app is running on port ${PORT}`);
-}); */
+});
 
 const stage = new Stage([
   list,
