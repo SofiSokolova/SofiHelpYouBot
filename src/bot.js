@@ -24,7 +24,8 @@ const bot =
   process.env.NODE_ENV === "DEV"
     ? new TelegramBot(token, { polling: true })
     : new TelegramBot(token, options);
-
+console.log(`Bot ${bot}`)
+console.log(`Bot ${options}`)
 /* bot.listen(PORT, () => {
   console.log(`Our app is running on port ${PORT}`);
 }); */
@@ -91,8 +92,10 @@ bot.on("message", async (ctx) => {
       break;
   }
 });
-bot.telegram.setWebHook(`${url}/bot${process.env.TOKEN}`);
+await bot.telegram.setWebhook(`${url}/bot${process.env.TOKEN}`);
 bot.startWebhook(`/bot${process.env.TOKEN}`, null, 5000)
+const webhookStatus = await Telegram.getWebhookInfo();
+console.log('Webhook status', webhookStatus);
 /* bot.launch(); */
 
 module.exports = bot;
