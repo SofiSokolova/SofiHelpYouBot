@@ -20,6 +20,7 @@ const options = {
 const url =
   /* process.env.APP_URL || */ "https://telegram-bot-shybot.herokuapp.com:443";
 const token = process.env.TOKEN;
+const PORT = process.env.PORT || 3000;
 
 const bot =
   process.env.NODE_ENV === "DEV"
