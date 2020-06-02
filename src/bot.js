@@ -29,8 +29,9 @@ const PORT = process.env.PORT || 3000;
 
 if (process.env.NODE_ENV === "DEV"){
   const bot = new TelegramBot(token, { polling: true })
-} else const bot = new TelegramBot(token, options)
-
+} else {
+const bot = new TelegramBot(token, options)
+}
 
 /* console.log(`Bot ${bot[0]}`);
 console.log(`Option ${options[0]}`); */
