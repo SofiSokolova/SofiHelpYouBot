@@ -17,18 +17,21 @@ const options = {
     port: process.env.PORT,
   },
 };
-const url = /* process.env.APP_URL || */ 'https://telegram-bot-shybot.herokuapp.com:443';
+const url =
+  /* process.env.APP_URL || */ "https://telegram-bot-shybot.herokuapp.com:443";
 const token = process.env.TOKEN;
 
 const bot =
   process.env.NODE_ENV === "DEV"
     ? new TelegramBot(token, { polling: true })
     : new TelegramBot(token, options);
-console.log(`Bot ${bot}`)
-console.log(`Bot ${options}`)
-/* bot.listen(PORT, () => {
+
+console.log(`Bot ${bot}`);
+console.log(`Bot ${options}`);
+
+bot.listen(PORT, () => {
   console.log(`Our app is running on port ${PORT}`);
-}); */
+});
 
 const stage = new Stage([
   list,
@@ -92,10 +95,14 @@ bot.on("message", async (ctx) => {
       break;
   }
 });
-await bot.telegram.setWebhook(`${url}/bot${process.env.TOKEN}`);
-bot.startWebhook(`/bot${process.env.TOKEN}`, null, 5000)
+
+await bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
+
+bot.startWebhook(`/${process.env.TOKEN}`, null, 5000);
+
 const webhookStatus = await Telegram.getWebhookInfo();
-console.log('Webhook status', webhookStatus);
+console.log("Webhook status", webhookStatus);
+
 /* bot.launch(); */
 
 module.exports = bot;
