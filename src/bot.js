@@ -100,7 +100,7 @@ bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
 
 bot.startWebhook(`/${process.env.TOKEN}`, null, 5000);
 
-const webhookStatus = await Telegram.getWebhookInfo();
+const webhookStatus = Telegram.getWebhookInfo();
 console.log("Webhook status", webhookStatus);
 
 /* bot.launch(); */
