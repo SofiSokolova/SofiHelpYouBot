@@ -27,8 +27,8 @@ const bot =
     ? new TelegramBot(token, { polling: true })
     : new TelegramBot(token, options);
 
-console.log(`Bot ${{bot}}`);
-console.log(`Option ${{options}}`);
+console.log(`Bot ${bot[0]}`);
+console.log(`Option ${options[0]}`);
 
 /* bot.listen(PORT, () => {
   console.log(`Our app is running on port ${PORT}`);
