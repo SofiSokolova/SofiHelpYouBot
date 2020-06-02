@@ -2,6 +2,7 @@ const config = require("dotenv").config();
 const { SCENES } = require("../constants");
 const { BUTTONS } = require("../constants");
 const TelegramBot = require("telegraf");
+const rp = require('request-promise');
 const { list } = require("./controllers/list");
 const { record } = require("./controllers/record");
 const { findByTag } = require("./controllers/findRecords/findByTag");
@@ -29,10 +30,7 @@ const bot =
 console.log(process.env.NODE_ENV)
 
 
-/* console.log(`Bot ${bot[0]}`);
-console.log(`Option ${options[0]}`); */
-
-bot.listen(PORT, () => {
+bot.hears(PORT, () => {
   console.log(`Our app is running on port ${PORT}`);
 });
 
@@ -99,6 +97,20 @@ bot.on("message", async (ctx) => {
   }
 });
 
+/* async function startDevMode(bot) {
+  rp(`https://api.telegram.org/bot${process.env.TOKEN}/deleteWebhook`)
+  await  bot.startPolling()
+
+} */
+
+/* async function startProdMode(bot) {
+  // If webhook not working, check fucking motherfucking UFW that probably blocks a port...
+
+  const options = {
+    key: fs.readFileSync(process.env.PATH_TO_KEY),
+    cert: fs.readFileSync(process.env.PATH_TO_CERT)
+  }; */
+
 bot.telegram.setWebhook(`${url}/${process.env.TOKEN}`);
 
 bot.startWebhook(`/${process.env.TOKEN}`, null, 5000);
@@ -106,6 +118,6 @@ bot.startWebhook(`/${process.env.TOKEN}`, null, 5000);
 /* const webhookStatus = Telegram.getWebhookInfo();
 console.log("Webhook status", webhookStatus);
  */
-/* bot.launch(); */
+bot.launch();
 
 module.exports = bot;
